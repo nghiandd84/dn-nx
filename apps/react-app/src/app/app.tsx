@@ -1,7 +1,8 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
+import { Route, Routes, Link } from 'react-router-dom';
 
-import { Route, Routes, Link } from "react-router-dom";
+import { DemoUnion } from './typescript';
 
 const StyledApp = styled.div`
   // Your style here
@@ -10,7 +11,6 @@ const StyledApp = styled.div`
 export function App() {
   return (
     <StyledApp>
-
       <div role="navigation">
         <ul>
           <li>
@@ -26,7 +26,7 @@ export function App() {
           path="/"
           element={
             <div>
-              This is the generated root route.{" "}
+              This is the generated root route.{' '}
               <Link to="/page-2">Click here for page 2.</Link>
             </div>
           }
@@ -41,6 +41,7 @@ export function App() {
         />
       </Routes>
       {/* END: routes */}
+      <DemoUnion />
     </StyledApp>
   );
 }
