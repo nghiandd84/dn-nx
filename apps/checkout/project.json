@@ -1,0 +1,164 @@
+{
+  "name": "checkout",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/checkout/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/apps/checkout/browser",
+        "index": "apps/checkout/src/index.html",
+        "baseHref": "/",
+        "main": "apps/checkout/src/main.ts",
+        "tsConfig": "apps/checkout/tsconfig.app.json",
+        "assets": ["apps/checkout/src/favicon.ico", "apps/checkout/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/checkout/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/checkout/src/environments/environment.ts",
+              "with": "apps/checkout/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "webpackConfig": "apps/checkout/webpack.config.prod.js"
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:ssr-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "browserTarget": "checkout:build:development",
+        "serverTarget": "checkout:serve-server:development",
+        "port": 4202,
+        "browserTargetOptions": {
+          "watch": true
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "browserTarget": "checkout:build:production",
+          "serverTarget": "checkout:serve-server:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/checkout/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "serve-static": {
+      "dependsOn": ["build", "server"],
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
+      "options": {
+        "command": "PORT=4202 node dist/apps/checkout/browser/server/main.js"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/checkout/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "server": {
+      "dependsOn": ["build"],
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "main": "apps/checkout/server.ts",
+        "outputPath": "dist/apps/checkout/server",
+        "tsConfig": "apps/checkout/tsconfig.server.json",
+        "compiler": "babel",
+        "externalDependencies": "all",
+        "outputHashing": "none",
+        "isolatedConfig": true,
+        "webpackConfig": "apps/checkout/webpack.server.config.js"
+      },
+      "configurations": {
+        "development": {
+          "optimization": false,
+          "sourceMap": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/checkout/src/environments/environment.ts",
+              "with": "apps/checkout/src/environments/environment.prod.ts"
+            }
+          ],
+          "sourceMap": false
+        }
+      }
+    },
+    "serve-browser": {
+      "executor": "@nrwl/react:module-federation-dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "checkout:build",
+        "hmr": true,
+        "port": 4202
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "checkout:build:development"
+        },
+        "production": {
+          "buildTarget": "checkout:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "serve-server": {
+      "executor": "@nrwl/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "checkout:server:development",
+        "buildTargetOptions": {
+          "watch": true
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "buildTarget": "checkout:server:production"
+        }
+      }
+    }
+  },
+  "tags": []
+}
